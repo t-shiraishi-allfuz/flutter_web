@@ -1,0 +1,47 @@
+name: flutter_web
+description: A new Flutter project.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.6 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
+
+  intl: ^0.18.1
+  timeago: ^3.5.0
+
+  cupertino_icons: ^1.0.2
+  firebase_core: ^2.15.1
+  firebase_auth: ^4.8.0
+  cloud_firestore: ^4.9.0
+  firebase_storage: ^11.2.6
+  google_sign_in: ^6.1.5
+  google_sign_in_web: ^0.12.0+4
+  sign_in_button: ^3.2.0
+  shared_preferences: ^2.2.0
+  image_picker_web: ^3.1.1
+  provider: ^6.0.5
+  rxdart: ^0.27.7
+  async: ^2.11.0
+  http: ^1.1.0
+  emoji_picker_flutter: ^1.6.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - images/
+    - images/ui/top/
+    - images/profile/
+    - images/post/
