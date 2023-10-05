@@ -10,12 +10,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
-import 'login.dart';
-import 'screen/mypage.dart';
-import 'screen/profile.dart';
-import 'screen/post_detail.dart';
-import 'utils/post_manager.dart';
+import 'views/login.dart';
+import 'views/create_acount.dart';
+import 'views/mypage.dart';
+import 'views/profile.dart';
+import 'views/post_detail.dart';
+import 'views/follow.dart';
 import 'utils/custom_shared.dart';
+import 'utils/post_manager.dart';
+import 'utils/profile_manager.dart';
 import 'widget/loading.dart';
 
 void main() async {
@@ -29,6 +32,9 @@ void main() async {
 			providers: [
 				ChangeNotifierProvider(
 					create: (context) => PostManager(),
+				),
+				ChangeNotifierProvider(
+					create: (context) => ProfileManager(),
 				),
 			],
 			child: MyApp()
@@ -72,7 +78,7 @@ class _MyAppState extends State<MyApp> {
 	PageRoute<dynamic> _createRoute(RouteSettings settings) {
 		routeName = settings.name!;
 
-		if (routeName == "/profile" || routeName == "/detail") {
+		if (routeName == "/profile" || routeName == "/detail" || routeName == "/follow") {
 			if (uriMap != null) {
 				params = uriMap!["params"];
 			} else {
@@ -93,6 +99,9 @@ class _MyAppState extends State<MyApp> {
 		} else if (routeName == '/detail') {
 			settings = RouteSettings(name: '/detail');
 			pageWidget = PostDetail(arguments: params!);
+		} else if (routeName == '/follow') {
+			settings = RouteSettings(name: '/follow');
+			pageWidget = Follow(arguments: params!);
 		} else if (routeName == '/mypage') {
 			settings = RouteSettings(name: '/mypage');
 			pageWidget = Mypage();
@@ -126,19 +135,11 @@ class _MyAppState extends State<MyApp> {
 						debugShowCheckedModeBanner: false,
 						title: 'Twitter風UI',
 						theme: ThemeData(
-							appBarTheme: AppBarTheme(
-								backgroundColor: Colors.black87,
-							),
-							colorScheme: ColorScheme.fromSwatch().copyWith(
-								primary: Colors.black87,
-								secondary: Colors.black87,
-								background: Colors.black87,
-							),
 							useMaterial3: true,
 						),
 						initialRoute: '/',
 						onGenerateRoute: generateRoute,
-						home: AutoLogin(),
+						home: Login(),
 					);
 				}
 			},

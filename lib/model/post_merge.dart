@@ -15,6 +15,9 @@ class PostMergeModel {
 	bool is_quote;
 	String like_count;
 	bool is_like;
+	bool is_self;
+	bool is_follow;
+	bool is_follower;
 	ProfileModel? reply_profile;
 	RepostMergeModel? repost;
 
@@ -28,6 +31,9 @@ class PostMergeModel {
 		required this.is_quote,
 		required this.like_count,
 		required this.is_like,
+		required this.is_self,
+		required this.is_follow,
+		required this.is_follower,
 		this.reply_profile,
 		this.repost,
 	});
@@ -43,6 +49,9 @@ class PostMergeModel {
 			'is_quote': is_quote,
 			'like_count': like_count,
 			'is_like': is_like,
+			'is_self': is_self,
+			'is_follow': is_follow,
+			'is_follower': is_follower,
 			'reply_profile': reply_profile,
 			'repost': repost,
 		};
@@ -59,6 +68,9 @@ class PostMergeModel {
 			is_quote: map['is_quote'],
 			like_count: map['like_count'],
 			is_like: map['is_like'],
+			is_self: map['is_self'],
+			is_follow: map['is_follow'],
+			is_follower: map['is_follower'],
 			reply_profile: map['reply_profile'],
 			repost: map['repost'],
 		);
@@ -76,6 +88,9 @@ class PostMergeModel {
 			'is_quote: $is_quote,'
 			'like_count: $like_count,'
 			'is_like: $is_like,'
+			'is_self: $is_self,'
+			'is_follow: $is_follow,'
+			'is_follower: $is_follower,'
 			'reply_profile: $reply_profile,'
 			'repost: $repost,'
 		')';

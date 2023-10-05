@@ -1,17 +1,12 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 
-import '../login.dart';
-import '../model/post.dart';
-import '../model/profile.dart';
-import 'timeline_all.dart';
-import 'timeline_follow.dart';
-import '../utils/media_uploader.dart';
-import '../widget/user.dart';
-import '../widget/floating.dart';
-import '../widget/dialog.dart';
+import '../home/timeline_all.dart';
+import '../home/timeline_follow.dart';
+
+import '../../model/profile.dart';
+import '../../widget/user.dart';
+import '../../widget/floating.dart';
+import '../../widget/dialog.dart';
 
 class HomeScreen extends StatefulWidget {
 	final ProfileModel profile;
@@ -46,14 +41,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
 	List<Widget> _headerBuildTabPages() {
 		return [
-			TimelineAll(uid: profile.uid),
-			TimelineFollow(uid: profile.uid),
+			TimelineAllScreen(uid: profile.uid),
+			TimelineFollowScreen(uid: profile.uid),
 		];
 	}
 
 	@override
 	Widget build(BuildContext context) {
 		return Scaffold(
+			backgroundColor: Colors.black87,
 			appBar: AppBar(
 				backgroundColor: Colors.transparent,
 				automaticallyImplyLeading: false,
@@ -76,9 +72,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 				),
 				title: const Text(
 					"ホーム",
-					style: TextStyle(
-						color: Colors.white
-					),
+					style: TextStyle(color: Colors.white),
 				),
 				actions: [
 					IconButton(
@@ -141,9 +135,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 									SizedBox(width: 5.0),
 									Text(
 										"設定",
-										style: TextStyle(
-											color: Colors.white,
-										),
+										style: TextStyle(color: Colors.white),
 									),
 								],
 							),
@@ -161,15 +153,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 									SizedBox(width: 5.0),
 									Text(
 										"ログアウト",
-										style: TextStyle(
-											color: Colors.white,
-										),
+										style: TextStyle(color: Colors.white),
 									),
 								],
 							),
 							onPressed: () {
 								Navigator.of(context).pop();
-								LogoutDialogWidget();
+								LogoutDialogWidget dialog = LogoutDialogWidget();
+								dialog.showConfirmDialog(context);
 							},
 						),
 					],

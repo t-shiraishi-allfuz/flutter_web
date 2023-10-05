@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
 
 import '../model/profile.dart';
-import '../screen/home.dart';
-import '../screen/search.dart';
-import '../screen/notice.dart';
-import '../screen/dm.dart';
+import '../views/mypage/home.dart';
+import '../views/mypage/search.dart';
+import '../views/mypage/notice.dart';
+import '../views/mypage/dm.dart';
 
-class FooterTabView extends StatefulWidget {
+// フッタータブ切り替え
+class FooterTabWidget extends StatefulWidget {
 	final TabController footerController;
 	final ProfileModel profile;
 
-	FooterTabView({
+	FooterTabWidget({
 		required this.footerController,
 		required this.profile
 	});
 
 	@override
-	_FooterTabViewState createState() => _FooterTabViewState();
+	_FooterTabWidgetState createState() => _FooterTabWidgetState();
 }
 
-class _FooterTabViewState extends State<FooterTabView> {
+class _FooterTabWidgetState extends State<FooterTabWidget> {
 	late TabController _footerController;
 	late ProfileModel profile;
 

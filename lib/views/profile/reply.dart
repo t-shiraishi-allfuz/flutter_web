@@ -2,22 +2,22 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../model/post.dart';
-import '../model/post_merge.dart';
-import '../utils/post_manager.dart';
-import '../widget/timeline.dart';
-import '../widget/loading.dart';
+import '../../model/post.dart';
+import '../../model/post_merge.dart';
+import '../../utils/post_manager.dart';
+import '../../widget/timeline.dart';
+import '../../widget/loading.dart';
 
-class Reply extends StatefulWidget {
+class ReplyScreen extends StatefulWidget {
 	final String uid;
 
-	Reply({required this.uid});
+	ReplyScreen({required this.uid});
 
 	@override
-	State<Reply> createState() => _Reply();
+	State<ReplyScreen> createState() => _ReplyScreen();
 }
 
-class _Reply extends State<Reply> with AutomaticKeepAliveClientMixin {
+class _ReplyScreen extends State<ReplyScreen> with AutomaticKeepAliveClientMixin {
 	late String uid;
 	late Future<List<PostMergeModel>> postsFuture;
 
@@ -63,9 +63,7 @@ class _Reply extends State<Reply> with AutomaticKeepAliveClientMixin {
 								return Center(
 									child: Text(
 										"エラーが発生しました",
-										style: TextStyle(
-											color: Colors.red
-										),
+										style: TextStyle(color: Colors.red),
 									),
 								);	
 							} else if (snapshot.hasData && snapshot.data != null) {
@@ -75,13 +73,11 @@ class _Reply extends State<Reply> with AutomaticKeepAliveClientMixin {
 									return Center(
 										child: Text(
 											"投稿はありません",
-											style: TextStyle(
-												color: Colors.white
-											),
+											style: TextStyle(color: Colors.white),
 										),
 									);
 								} else {
-									return Timeline(
+									return TimelineWidget(
 										posts: posts,
 										uid: uid,
 									);

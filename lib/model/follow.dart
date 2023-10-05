@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'profile.dart';
+
 // フォロー管理
 class FollowModel {
 	static final CollectionReference store_follow = FirebaseFirestore.instance.collection('follow');
@@ -30,6 +32,18 @@ class FollowModel {
 	// データ追加
 	static Future<void> addData(FollowModel newFollow) async {
 		await store_follow.add(newFollow.toMap());
+	}
+
+	// データ削除
+	static Future<void> deleteData(String uid, String follow_uid) async {
+		final snapshot = await store_follow
+			.where('uid', isEqualTo: uid)
+			.where('follow_uid', isEqualTo: follow_uid)
+			.get();
+
+		snapshot.docs.forEach((doc) {
+			doc.reference.delete();
+		});
 	}
 
 	// 対象ユーザーのフォローを取得
@@ -70,5 +84,20 @@ class FollowModel {
 	static Future<String> countFollower(String uid) async {
 		List<String> followerList = await FollowModel.getFollowerList(uid);
 		return followerList.length.toString();
+	}
+
+	// 対象ユーザーをフォローしているかどうか
+	static Future<bool> isFollow(String uid, String follow_uid) async {
+		bool is_follow = false;
+
+		final snapshot = await store_follow
+			.where('uid', isEqualTo: uid)
+			.where('follow_uid', isEqualTo: follow_uid)
+			.get();
+
+		if (snapshot.docs.isNotEmpty) {
+			is_follow = true;
+		}
+		return is_follow;
 	}
 }

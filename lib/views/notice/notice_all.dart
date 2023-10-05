@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
 
-import '../widget/searchlist.dart';
+import '../../widget/noticelist.dart';
 
-class SearchTrendScreen extends StatefulWidget {
-	const SearchTrendScreen({super.key});
+class NoticeAllScreen extends StatefulWidget {
+	final String uid;
+
+	NoticeAllScreen({required this.uid});
 
 	@override
-	State<SearchTrendScreen> createState() => _SearchTrendScreenState();
+	State<NoticeAllScreen> createState() => _NoticeAllScreenState();
 }
 
-class _SearchTrendScreenState extends State<SearchTrendScreen> {
+class _NoticeAllScreenState extends State<NoticeAllScreen> {
+	late String uid;
+
+	@override
+	void initState() {
+		super.initState();
+		uid = widget.uid;
+	}
+
 	@override
 	Widget build(BuildContext context) {
 		return Scaffold(
@@ -22,7 +32,7 @@ class _SearchTrendScreenState extends State<SearchTrendScreen> {
 							child: ListView.builder(
 								itemCount: 10,
 								itemBuilder: (context, index) {
-									return SearchlistWidget();
+									return NoticelistWidget();
 								},
 							),
 						),

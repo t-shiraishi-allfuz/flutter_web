@@ -2,23 +2,25 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../model/post.dart';
-import '../model/follow.dart';
-import '../model/post_merge.dart';
-import '../utils/post_manager.dart';
-import '../widget/timeline.dart';
-import '../widget/loading.dart';
+import '../../model/like.dart';
+import '../../model/post.dart';
+import '../../model/post_merge.dart';
+import '../../utils/post_manager.dart';
+import '../../widget/timeline.dart';
+import '../../widget/loading.dart';
 
-class TimelineFollow extends StatefulWidget {
+class LikeScreen extends StatefulWidget {
 	final String uid;
 
-	TimelineFollow({required this.uid});
+	LikeScreen({
+		required this.uid,
+	});
 
 	@override
-	State<TimelineFollow> createState() => _TimelineFollow();
+	State<LikeScreen> createState() => _LikeScreen();
 }
 
-class _TimelineFollow extends State<TimelineFollow> with AutomaticKeepAliveClientMixin {  
+class _LikeScreen extends State<LikeScreen> with AutomaticKeepAliveClientMixin {
 	late String uid;
 	late Future<List<PostMergeModel>> postsFuture;
 
@@ -34,8 +36,8 @@ class _TimelineFollow extends State<TimelineFollow> with AutomaticKeepAliveClien
 
 	// データ取得
 	Future<List<PostMergeModel>> fetchData() async {
-		List<String> followUids = await FollowModel.getFollowList(uid);
-		return await PostModel.getPostByUids(followUids, uid);
+		List<String> likePostIds = await LikeModel.getLikePostIds(uid);
+		return await PostModel.getPostByIds(likePostIds, uid);
 	}
 
 	// データ再取得
@@ -65,9 +67,7 @@ class _TimelineFollow extends State<TimelineFollow> with AutomaticKeepAliveClien
 								return Center(
 									child: Text(
 										"エラーが発生しました",
-										style: TextStyle(
-											color: Colors.red
-										),
+										style: TextStyle(color: Colors.red),
 									),
 								);	
 							} else if (snapshot.hasData && snapshot.data != null) {
@@ -77,13 +77,11 @@ class _TimelineFollow extends State<TimelineFollow> with AutomaticKeepAliveClien
 									return Center(
 										child: Text(
 											"投稿はありません",
-											style: TextStyle(
-												color: Colors.white
-											),
+											style: TextStyle(color: Colors.white),
 										),
 									);
 								} else {
-									return Timeline(
+									return TimelineWidget(
 										posts: posts,
 										uid: uid,
 									);

@@ -62,7 +62,7 @@ class _UserIconWidgetState extends State<UserIconWidget> {
 									context,
 									"/profile",
 									arguments: {
-										"uid": uid,
+										"uid": profile.uid,
 										"is_self": (uid != profile.uid) ? false : true
 									}
 								);
@@ -194,10 +194,8 @@ class UserNameWidget extends StatelessWidget {
 								color: Colors.white70,
 							),
 							Text(
-								post.profile.username + "が再投稿しました",
-								style: TextStyle(
-									color: Colors.white70,
-								),
+								post.profile.username! + "が再投稿しました",
+								style: TextStyle(color: Colors.white70),
 							),
 						],
 					),
@@ -206,7 +204,7 @@ class UserNameWidget extends StatelessWidget {
 						mainAxisAlignment: MainAxisAlignment.start,
 						children: [
 							Text(
-								post.profile.username,
+								post.profile.username!,
 								style: TextStyle(
 									color: Colors.white,
 									fontWeight: FontWeight.bold,
@@ -214,17 +212,13 @@ class UserNameWidget extends StatelessWidget {
 							),
 							SizedBox(width: 5.0),
 							Text(
-								"@"+ post.profile.acount,
-								style: TextStyle(
-									color: Colors.white70,
-								),
+								"@"+ post.profile.acount!,
+								style: TextStyle(color: Colors.white70),
 							),
 							SizedBox(width: 5.0),
 							Text(
 								post.post.formattedTimestamp!,
-								style: TextStyle(
-									color: Colors.white70,
-								),
+								style: TextStyle(color: Colors.white70),
 							),
 						],
 					),
@@ -244,10 +238,8 @@ class UserNameWidget extends StatelessWidget {
 									);
 								},
 								child: Text(
-									'返信先: @'+ post.reply_profile!.acount,
-									style: TextStyle(
-										color: Colors.lightBlue,
-									),
+									'返信先: @'+ post.reply_profile!.acount!,
+									style: TextStyle(color: Colors.lightBlue),
 								),
 							),
 						],
@@ -257,7 +249,7 @@ class UserNameWidget extends StatelessWidget {
 						mainAxisAlignment: MainAxisAlignment.start,
 						children: [
 							Text(
-								post.repost!.profile.username,
+								post.repost!.profile.username!,
 								style: TextStyle(
 									color: Colors.white,
 									fontWeight: FontWeight.bold,
@@ -265,17 +257,13 @@ class UserNameWidget extends StatelessWidget {
 							),
 							SizedBox(width: 5.0),
 							Text(
-								"@"+ post.repost!.profile.acount,
-								style: TextStyle(
-									color: Colors.white70,
-								),
+								"@"+ post.repost!.profile.acount!,
+								style: TextStyle(color: Colors.white70),
 							),
 							SizedBox(width: 5.0),
 							Text(
 								post.repost!.post!.formattedTimestamp!,
-								style: TextStyle(
-									color: Colors.white70,
-								),
+								style: TextStyle(color: Colors.white70),
 							),
 						],
 					),
@@ -298,7 +286,7 @@ class UserNameVerticalWidget extends StatelessWidget {
 			crossAxisAlignment: CrossAxisAlignment.start,
 			children: [
 				Text(
-					post.profile.username,
+					post.profile.username!,
 					textAlign: TextAlign.left,
 					style: TextStyle(
 						color: Colors.white,
@@ -310,17 +298,13 @@ class UserNameVerticalWidget extends StatelessWidget {
 					mainAxisAlignment: MainAxisAlignment.start,
 					children: [
 						Text(
-							"@"+ post.profile.acount,
-							style: TextStyle(
-								color: Colors.white70,
-							),
+							"@"+ post.profile.acount!,
+							style: TextStyle(color: Colors.white70),
 						),
 						SizedBox(width: 5.0),
 						Text(
 							post.post.formattedTimestamp!,
-							style: TextStyle(
-								color: Colors.white70,
-							),
+							style: TextStyle(color: Colors.white70),
 						),
 					],
 				),

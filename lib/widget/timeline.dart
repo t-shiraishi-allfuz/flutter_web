@@ -3,22 +3,22 @@ import 'package:flutter/material.dart';
 import '../model/post_merge.dart';
 import '../widget/postcard.dart';
 
-class Timeline extends StatefulWidget {
+class TimelineWidget extends StatefulWidget {
 	List<PostMergeModel> posts;
 	final String uid;
 	Future<List<PostMergeModel>>? replyFuture; 
 
-	Timeline({
+	TimelineWidget({
 		required this.posts,
 		required this.uid,
 		this.replyFuture
 	});
 
 	@override
-	_Timeline createState() => _Timeline();
+	_TimelineWidget createState() => _TimelineWidget();
 }
 
-class _Timeline extends State<Timeline> {
+class _TimelineWidget extends State<TimelineWidget> {
 	late List<PostMergeModel> posts;
 	late String uid;
 	late Future<List<PostMergeModel>>? replyFuture;
@@ -38,7 +38,7 @@ class _Timeline extends State<Timeline> {
 			itemBuilder: (context, index) {
 				return Column(
 					children: [
-						PostCard(post: posts[index], uid: uid),
+						PostCardWidget(post: posts[index], uid: uid),
 						Divider(height: 1.0),
 						if (replyFuture != null)
 							FutureBuilder<List<PostMergeModel>>(
@@ -50,9 +50,7 @@ class _Timeline extends State<Timeline> {
 										return Center(
 											child: Text(
 												"エラーが発生しました",
-												style: TextStyle(
-													color: Colors.red
-												),
+												style: TextStyle(color: Colors.red),
 											),
 										);
 									} else if (snapshot.hasData && snapshot.data != null) {
@@ -62,15 +60,13 @@ class _Timeline extends State<Timeline> {
 											return Center(
 												child: Text(
 													"投稿はありません",
-													style: TextStyle(
-														color: Colors.white
-													),
+													style: TextStyle(color: Colors.white),
 												),
 											);
 										} else {
 											return Column(
 												children: [
-													PostCard(post: replys[index], uid: uid),
+													PostCardWidget(post: replys[index], uid: uid),
 													Divider(height: 1.0),
 												],
 											);

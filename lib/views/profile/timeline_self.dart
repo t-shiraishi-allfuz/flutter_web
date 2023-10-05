@@ -2,22 +2,22 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../model/post.dart';
-import '../model/post_merge.dart';
-import '../utils/post_manager.dart';
-import '../widget/timeline.dart';
-import '../widget/loading.dart';
+import '../../model/post.dart';
+import '../../model/post_merge.dart';
+import '../../utils/post_manager.dart';
+import '../../widget/timeline.dart';
+import '../../widget/loading.dart';
 
-class TimelineSelf extends StatefulWidget {
+class TimelineSelfScreen extends StatefulWidget {
 	final String uid;
 
-	TimelineSelf({required this.uid});
+	TimelineSelfScreen({required this.uid});
 
 	@override
-	State<TimelineSelf> createState() => _TimelineSelf();
+	State<TimelineSelfScreen> createState() => _TimelineSelfScreen();
 }
 
-class _TimelineSelf extends State<TimelineSelf> with AutomaticKeepAliveClientMixin {
+class _TimelineSelfScreen extends State<TimelineSelfScreen> with AutomaticKeepAliveClientMixin {
 	late String uid;
 	late Future<List<PostMergeModel>> postsFuture;
 
@@ -63,9 +63,7 @@ class _TimelineSelf extends State<TimelineSelf> with AutomaticKeepAliveClientMix
 								return Center(
 									child: Text(
 										"エラーが発生しました",
-										style: TextStyle(
-											color: Colors.red
-										),
+										style: TextStyle(color: Colors.red),
 									),
 								);	
 							} else if (snapshot.hasData && snapshot.data != null) {
@@ -75,13 +73,11 @@ class _TimelineSelf extends State<TimelineSelf> with AutomaticKeepAliveClientMix
 									return Center(
 										child: Text(
 											"投稿はありません",
-											style: TextStyle(
-												color: Colors.white
-											),
+											style: TextStyle(color: Colors.white),
 										),
 									);
 								} else {
-									return Timeline(
+									return TimelineWidget(
 										posts: posts,
 										uid: uid,
 									);

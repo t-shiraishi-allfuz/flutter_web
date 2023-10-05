@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'search_all.dart';
-import 'search_trend.dart';
+import '../search/search_all.dart';
+import '../search/search_trend.dart';
 
 class SearchScreen extends StatefulWidget {
 	SearchScreen({super.key});
@@ -40,6 +40,7 @@ class _SearchScreen extends State<SearchScreen> with TickerProviderStateMixin {
 	@override
 	Widget build(BuildContext context) {
 		return Scaffold(
+			backgroundColor: Colors.black87,
 			appBar: AppBar(
 				backgroundColor: Colors.transparent,
 				toolbarHeight: 80.0,
@@ -50,7 +51,10 @@ class _SearchScreen extends State<SearchScreen> with TickerProviderStateMixin {
 						decoration: InputDecoration(
 							labelText: "検索",
 							hintText: "キーワードを入力して下さい",
-							prefixIcon: Icon(Icons.search),
+							prefixIcon: Icon(
+								Icons.search,
+								color: Colors.white,
+							),
 							filled: true,
 							fillColor: Colors.black54,
 							border: OutlineInputBorder(
@@ -58,13 +62,9 @@ class _SearchScreen extends State<SearchScreen> with TickerProviderStateMixin {
 							),
 							focusedBorder: OutlineInputBorder(
 								borderRadius: BorderRadius.circular(30.0),
-								borderSide: BorderSide(
-									color: Colors.lightBlue,
-								),
+								borderSide: BorderSide(color: Colors.lightBlue),
 							),
-							labelStyle: TextStyle(
-								color: Colors.grey,
-							),
+							labelStyle: TextStyle(color: Colors.grey),
 						),
 						cursorColor: Colors.lightBlue,
 					),

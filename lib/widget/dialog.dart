@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 
-import '../login.dart';
+import '../views/login.dart';
 import '../model/post_merge.dart';
 import '../utils/media_uploader.dart';
 import '../utils/post_manager.dart';
@@ -67,6 +67,7 @@ class PostDialogWidget {
 			context: context,
 			builder: (BuildContext context) {
 				return AlertDialog(
+					backgroundColor: Colors.black87,
 					shape: RoundedRectangleBorder(
 						side: BorderSide(
 							color: Colors.white70,
@@ -76,23 +77,17 @@ class PostDialogWidget {
 					shadowColor: Colors.white70,
 					title: Text(
 						"入力エラー",
-						style: TextStyle(
-							color: Colors.white
-						),
+						style: TextStyle(color: Colors.white),
 					),
 					content: Text(
 						"投稿内容が入力されていません",
-						style: TextStyle(
-							color: Colors.red
-						),
+						style: TextStyle(color: Colors.red),
 					),
 					actions: [
 						TextButton(
 							child: Text(
 								"閉じる",
-								style: TextStyle(
-									color: Colors.lightBlue
-								),
+								style: TextStyle(color: Colors.lightBlue),
 							),
 							onPressed: () {
 								_textController = TextEditingController();
@@ -127,6 +122,7 @@ class PostDialogWidget {
 			context: context,
 			builder: (BuildContext context) {
 				return Dialog(
+					backgroundColor: Colors.black87,
 					shape: RoundedRectangleBorder(
 						side: BorderSide(
 							color: Colors.white70,
@@ -176,9 +172,7 @@ class PostDialogWidget {
 														),
 														child: Text(
 															(is_reply) ? "返信" : "投稿",
-															style: TextStyle(
-																color: Colors.white
-															),
+															style: TextStyle(color: Colors.white),
 														),
 													),
 												),
@@ -198,13 +192,9 @@ class PostDialogWidget {
 													decoration: InputDecoration(
 														hintText: (is_reply) ? "返信を投稿する" :" いまどうしてる？",
 														hintStyle: TextStyle(color: Colors.grey),
-														counterStyle: TextStyle(
-															color: Colors.white70,
-														),
+														counterStyle: TextStyle(color: Colors.white70),
 														enabledBorder: UnderlineInputBorder(
-															borderSide: BorderSide(
-																color: Colors.white70,
-															),
+															borderSide: BorderSide(color: Colors.white70),
 														),
 														focusedBorder: UnderlineInputBorder(
 															borderSide: BorderSide(color: Colors.lightBlue),
@@ -213,9 +203,7 @@ class PostDialogWidget {
 													inputFormatters: [
 														LengthLimitingTextInputFormatter(200),
 													],
-													style: TextStyle(
-														color: Colors.white,
-													),
+													style: TextStyle(color: Colors.white),
 												),
 												SizedBox(height: 8.0),
 												StreamBuilder<String>(
@@ -286,9 +274,7 @@ class PostDialogWidget {
 																		alignment: Alignment.topLeft,
 																		child: Text(
 																			post!.post.content,
-																			style: TextStyle(
-																				color: Colors.white,
-																			),
+																			style: TextStyle(color: Colors.white),
 																		),
 																	),
 																	SizedBox(height: 8.0),
@@ -385,26 +371,53 @@ class PostDialogWidget {
 	}
 }
 
-// ログアウト確認ダイアログ
-class LogoutDialogWidget extends StatelessWidget {
-	@override
-	Widget build(BuildContext context) {
-		return IconButton(
-			icon: const Icon(
-				Icons.logout,
-				color: Colors.white
-			),
-			onPressed: () async {
-				_showConfirmDialog(context);
-			},
-		);
-	}	
-
-	void _showConfirmDialog(BuildContext context) {
+// ダイアログ
+class CustomDialogWidget {
+	// エラーダイアログ
+	void showErrorDialog(BuildContext context, String title, String message) {
 		showDialog(
 			context: context,
 			builder: (BuildContext context) {
 				return AlertDialog(
+					backgroundColor: Colors.black87,
+					shape: RoundedRectangleBorder(
+						side: BorderSide(color: Colors.white70),
+						borderRadius: BorderRadius.circular(10.0),
+					),
+					shadowColor: Colors.white70,
+					title: Text(
+						title,
+						style: TextStyle(color: Colors.white),
+					),
+					content: Text(
+						message,
+						style: TextStyle(color: Colors.red),
+					),
+					actions: [
+						TextButton(
+							child: Text(
+								"閉じる",
+								style: TextStyle(color: Colors.lightBlue),
+							),
+							onPressed: () {
+								Navigator.of(context).pop();
+							}
+						),
+					],
+				);
+			},
+		);
+	}
+}
+
+// ログアウト確認ダイアログ
+class LogoutDialogWidget {
+	void showConfirmDialog(BuildContext context) {
+		showDialog(
+			context: context,
+			builder: (BuildContext context) {
+				return AlertDialog(
+					backgroundColor: Colors.black87,
 					shape: RoundedRectangleBorder(
 						side: BorderSide(
 							color: Colors.white70,
@@ -414,31 +427,26 @@ class LogoutDialogWidget extends StatelessWidget {
 					shadowColor: Colors.white70,
 					title: Text(
 						"ログアウト確認",
-						style: TextStyle(
-							color: Colors.white
-						),
+						style: TextStyle(color: Colors.white),
 					),
 					content: Text(
 						"ログアウトしますか？",
-						style: TextStyle(
-							color: Colors.white
-						),
+						style: TextStyle(color: Colors.white),
 					),
 					actions: [
 						TextButton(
 							child: Text(
 								"ログアウト",
-								style: TextStyle(
-									color: Colors.lightBlue
-								),
+								style: TextStyle(color: Colors.lightBlue),
 							),
 							onPressed: () async {
-								await Logout.signOut();
+								Logout logout = Logout();
+								await logout.signOut();
 								await Future.delayed(Duration(milliseconds: 500));
 
 								Navigator.pushNamed(
 									context,
-									"login",
+									"/login",
 								);
 							}
 						),

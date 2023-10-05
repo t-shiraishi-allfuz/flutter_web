@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../widget/searchlist.dart';
+import '../../widget/searchlist.dart';
 
 class SearchAllScreen extends StatefulWidget {
 	const SearchAllScreen({super.key});

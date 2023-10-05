@@ -2,25 +2,22 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../model/like.dart';
-import '../model/post.dart';
-import '../model/post_merge.dart';
-import '../utils/post_manager.dart';
-import '../widget/timeline.dart';
-import '../widget/loading.dart';
+import '../../model/post.dart';
+import '../../model/post_merge.dart';
+import '../../utils/post_manager.dart';
+import '../../widget/timeline.dart';
+import '../../widget/loading.dart';
 
-class Like extends StatefulWidget {
+class TimelineAllScreen extends StatefulWidget {
 	final String uid;
 
-	Like({
-		required this.uid,
-	});
+	TimelineAllScreen({required this.uid});
 
 	@override
-	State<Like> createState() => _Like();
+	State<TimelineAllScreen> createState() => _TimelineAllScreen();
 }
 
-class _Like extends State<Like> with AutomaticKeepAliveClientMixin {
+class _TimelineAllScreen extends State<TimelineAllScreen> with AutomaticKeepAliveClientMixin {
 	late String uid;
 	late Future<List<PostMergeModel>> postsFuture;
 
@@ -36,15 +33,14 @@ class _Like extends State<Like> with AutomaticKeepAliveClientMixin {
 
 	// データ取得
 	Future<List<PostMergeModel>> fetchData() async {
-		List<String> likePostIds = await LikeModel.getLikePostIds(uid);
-		return await PostModel.getPostByIds(likePostIds, uid);
+		return await PostModel.getAll(uid);
 	}
 
 	// データ再取得
 	void reFetch() {
 		postsFuture = fetchData();
 	}
-
+	
 	@override
 	Widget build(BuildContext context) {
 		// 初期化
@@ -67,9 +63,7 @@ class _Like extends State<Like> with AutomaticKeepAliveClientMixin {
 								return Center(
 									child: Text(
 										"エラーが発生しました",
-										style: TextStyle(
-											color: Colors.red
-										),
+										style: TextStyle(color: Colors.red),
 									),
 								);	
 							} else if (snapshot.hasData && snapshot.data != null) {
@@ -79,13 +73,11 @@ class _Like extends State<Like> with AutomaticKeepAliveClientMixin {
 									return Center(
 										child: Text(
 											"投稿はありません",
-											style: TextStyle(
-												color: Colors.white
-											),
+											style: TextStyle(color: Colors.white),
 										),
 									);
 								} else {
-									return Timeline(
+									return TimelineWidget(
 										posts: posts,
 										uid: uid,
 									);

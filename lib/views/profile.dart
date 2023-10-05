@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-import 'timeline_self.dart';
-import 'reply.dart';
-import 'media.dart';
-import 'like.dart';
+import './profile/timeline_self.dart';
+import './profile/reply.dart';
+import './profile/media.dart';
+import './profile/like.dart';
 
-import '../login.dart';
 import '../model/profile.dart';
 import '../model/follow.dart';
 import '../model/profile_merge.dart';
 import '../utils/custom_shared.dart';
 import '../utils/media_uploader.dart';
+import '../utils/profile_manager.dart';
 import '../widget/user.dart';
 import '../widget/loading.dart';
 import '../widget/floating.dart';
@@ -47,10 +47,10 @@ class _Profile extends State<Profile> with SingleTickerProviderStateMixin {
 
 	List<Widget> _buildTabPages(String uid) {
 		return [
-			TimelineSelf(uid: uid),
-			Reply(uid: uid),
-			Media(uid: uid),
-			Like(uid: uid),
+			TimelineSelfScreen(uid: uid),
+			ReplyScreen(uid: uid),
+			MediaScreen(uid: uid),
+			LikeScreen(uid: uid),
 		];
 	}
 
@@ -70,17 +70,41 @@ class _Profile extends State<Profile> with SingleTickerProviderStateMixin {
 		super.dispose();
 	}
 
+	// プロフィール取得
 	Future<ProfileMergeModel> fetchData() async {
-		return await ProfileModel.fetchProfileMergeModel(uid);
+		// 自分のUIDを取得
+		final self_uid = await CustomShared.getUID();
+		return await ProfileModel.fetchProfileMergeModel(uid, self_uid!);
 	}
 
+	// データ再取得
+	void reFetch() {
+		profileFuture = fetchData();
+	}
+
+	// プロフィール更新
 	Future<void> changeProfile(ProfileModel profile) async {
 		profile.username = inputName;
 		profile.introduction = inputIntroduction;
 		await ProfileModel.updateData(profile);
 
 		setState(() {
-			profileFuture = fetchData();
+			reFetch();
+		});
+	}
+
+	// フォロー更新
+	Future<void> changeFollow(ProfileMergeModel profile) async {
+		ProfileManager manager = ProfileManager();
+
+		if (profile.is_follow) {
+			await manager.deleteFollow(profile.self_uid, uid);
+		} else {
+			await manager.executeFollow(profile.self_uid, uid);
+		}
+
+		setState(() {
+			reFetch();
 		});
 	}
 
@@ -112,14 +136,15 @@ class _Profile extends State<Profile> with SingleTickerProviderStateMixin {
 			builder: (context, snapshot) {
 				if (snapshot.connectionState == ConnectionState.waiting) {
 					return LoadingWidget();
-				} else if (snapshot.hasError) {
+				} else if (snapshot.hasError || snapshot.data == null) {
 					return Center(child: Text("エラーが発生しました"));
-				} else if (snapshot.connectionState == ConnectionState.done) {
+				} else if (snapshot.hasData) {
 					final profile = snapshot.data!;
 					oldIcon = profile.profile.icon;
 					oldHeaderfile = profile.profile.headerfile;
 
 					return Scaffold(
+						backgroundColor: Colors.black87,
 						key: scaffoldKey,
 						appBar: AppBar(
 							backgroundColor: Colors.transparent,
@@ -127,9 +152,7 @@ class _Profile extends State<Profile> with SingleTickerProviderStateMixin {
 							toolbarHeight: 50.0,
 							title: Text(
 								"プロフィール",
-								style: TextStyle(
-									color: Colors.white,
-								),
+								style: TextStyle(color: Colors.white),
 							),
 							leading: IconButton(
 								icon: Icon(Icons.arrow_back),
@@ -179,27 +202,23 @@ class _Profile extends State<Profile> with SingleTickerProviderStateMixin {
 																SizedBox(height: 5.0),
 																Text(
 																	"プロフィールを編集",
-																	style: TextStyle(
-																		color: Colors.white
-																	),
+																	style: TextStyle(color: Colors.white),
 																),
 																SizedBox(height: 5.0),
 																OutlinedButton(
 																	child: Text(
 																		"保存",
 																		textAlign: TextAlign.center,
-																		style: TextStyle(
-																			color: Colors.white,
-																		),
+																		style: TextStyle(color: Colors.white),
 																	),
 																	style: OutlinedButton.styleFrom(
 																		primary: Colors.black87,
 																		shape: StadiumBorder(),
 																		side: BorderSide(color: Colors.white70),
 																	),
-																	onPressed: () {
+																	onPressed: () async {
 																		_formKey.currentState?.save();
-																		changeProfile(profile.profile);
+																		await changeProfile(profile.profile);
 																	},
 																),
 															],
@@ -250,7 +269,7 @@ class _Profile extends State<Profile> with SingleTickerProviderStateMixin {
 																				),
 																			),
 																		),
-																		onSaved: (String? value) {
+																		onSaved: (value) {
 																			inputName = value!;
 																		},
 																	),
@@ -287,7 +306,7 @@ class _Profile extends State<Profile> with SingleTickerProviderStateMixin {
 																				),
 																			),
 																		),
-																		onSaved: (String? value) {
+																		onSaved: (value) {
 																			inputIntroduction = value!;
 																		},
 																	),
@@ -303,7 +322,7 @@ class _Profile extends State<Profile> with SingleTickerProviderStateMixin {
 								),
 							),
 						),
-						body:	Column(
+						body: Column(
 							crossAxisAlignment: CrossAxisAlignment.start,
 							children: [
 								UserHeaderWidget(
@@ -323,7 +342,7 @@ class _Profile extends State<Profile> with SingleTickerProviderStateMixin {
 														crossAxisAlignment: CrossAxisAlignment.start,
 														children: [
 															Text(
-																profile.profile.username,
+																profile.profile.username!,
 																textAlign: TextAlign.left,
 																style: TextStyle(
 																	fontSize: 14,
@@ -333,7 +352,7 @@ class _Profile extends State<Profile> with SingleTickerProviderStateMixin {
 															),
 															SizedBox(height: 4.0),
 															Text(
-																'@'+ profile.profile.acount,
+																'@'+ profile.profile.acount!,
 																textAlign: TextAlign.left,
 																style: TextStyle(
 																	fontSize: 12,
@@ -342,28 +361,46 @@ class _Profile extends State<Profile> with SingleTickerProviderStateMixin {
 															),
 														],
 													),
-													OutlinedButton(
-														child: Text(
-															"プロフィールを編集",
-															textAlign: TextAlign.center,
-															style: TextStyle(
-																color: Colors.white,
-															),
-														),
-														style: OutlinedButton.styleFrom(
-															primary: Colors.black87,
-															shape: StadiumBorder(),
-															side: BorderSide(color: Colors.white70),
-														),
-														onPressed: () {
-															if (scaffoldKey.currentState!.isDrawerOpen) {
-																scaffoldKey.currentState!.closeEndDrawer();
+													(is_self)
+														? ElevatedButton(
+																child: Text(
+																	"プロフィールを編集",
+																	textAlign: TextAlign.center,
+																	style: TextStyle(color: Colors.white),
+																),
+																style: ElevatedButton.styleFrom(
+																	primary: Colors.black87,
+																	shape: StadiumBorder(),
+																	side: BorderSide(color: Colors.white70),
+																),
+																onPressed: () {
+																	if (scaffoldKey.currentState!.isDrawerOpen) {
+																		scaffoldKey.currentState!.closeEndDrawer();
 
-															} else {
-																scaffoldKey.currentState!.openEndDrawer();
-															}
-														},
-													),
+																	} else {
+																		scaffoldKey.currentState!.openEndDrawer();
+																	}
+																},
+															)
+														: ElevatedButton(
+																child: Text(
+																	(profile.is_follow) ? "フォロー中" : "フォロー",
+																	textAlign: TextAlign.center,
+																	style: TextStyle(
+																		color: (profile.is_follow) ? Colors.white : Colors.black,
+																	),
+																),
+																style: ElevatedButton.styleFrom(
+																	primary: (profile.is_follow) ? Colors.black87 : Colors.white,
+																	shape: StadiumBorder(),
+																	side: BorderSide(
+																		color: (profile.is_follow) ? Colors.white70 : Colors.black87,
+																	),
+																),
+																onPressed: () async {
+																	await changeFollow(profile);
+																},
+															),
 												],
 											),
 											SizedBox(height: 16.0),
@@ -378,39 +415,65 @@ class _Profile extends State<Profile> with SingleTickerProviderStateMixin {
 											SizedBox(height: 16.0),
 											Row(
 												children: [
-													Text(
-														profile.follow_count,
-														textAlign: TextAlign.left,
-														style: TextStyle(
-															fontSize: 12,
-															color: Colors.white,
-														),
-													),
-													SizedBox(width: 2.0),
-													Text(
-														"フォロー",
-														textAlign: TextAlign.left,
-														style: TextStyle(
-															fontSize: 12,
-															color: Colors.white70,
+													GestureDetector(
+														onTap: () {
+															Navigator.pushNamed(
+																context,
+																"/follow",
+																arguments: {"uid": profile.profile.uid, "is_self": is_self}
+															);
+														},
+														child: Row(
+															children: [
+																Text(
+																	profile.follow_count,
+																	textAlign: TextAlign.left,
+																	style: TextStyle(
+																		fontSize: 12,
+																		color: Colors.white,
+																	),
+																),
+																SizedBox(width: 2.0),
+																Text(
+																	"フォロー",
+																	textAlign: TextAlign.left,
+																	style: TextStyle(
+																		fontSize: 12,
+																		color: Colors.white70,
+																	),
+																),
+															],
 														),
 													),
 													SizedBox(width: 16.0),
-													Text(
-														profile.follower_count,
-														textAlign: TextAlign.left,
-														style: TextStyle(
-															fontSize: 12,
-															color: Colors.white,
-														),
-													),
-													SizedBox(width: 2.0),
-													Text(
-														"フォロワー",
-														textAlign: TextAlign.left,
-														style: TextStyle(
-															fontSize: 12,
-															color: Colors.white70,
+													GestureDetector(
+														onTap: () {
+															Navigator.pushNamed(
+																context,
+																"/follow",
+																arguments: {"uid": profile.profile.uid, "is_self": is_self}
+															);
+														},
+														child: Row(
+															children: [
+																Text(
+																	profile.follower_count,
+																	textAlign: TextAlign.left,
+																	style: TextStyle(
+																		fontSize: 12,
+																		color: Colors.white,
+																	),
+																),
+																SizedBox(width: 2.0),
+																Text(
+																	"フォロワー",
+																	textAlign: TextAlign.left,
+																	style: TextStyle(
+																		fontSize: 12,
+																		color: Colors.white70,
+																	),
+																),
+															],
 														),
 													),
 												],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'notice_all.dart';
-import 'notice_reply.dart';
+import '../notice/notice_all.dart';
+import '../notice/notice_reply.dart';
 
 class NoticeScreen extends StatefulWidget {
 	final String uid;
@@ -45,14 +45,13 @@ class _NoticeScreen extends State<NoticeScreen> with TickerProviderStateMixin {
 	@override
 	Widget build(BuildContext context) {
 		return Scaffold(
+			backgroundColor: Colors.black87,
 			appBar: AppBar(
 				backgroundColor: Colors.transparent,
 				automaticallyImplyLeading: false,
 				title: Text(
 					"通知",
-					style: TextStyle(
-						color: Colors.white
-					),
+					style: TextStyle(color: Colors.white),
 				),
 			),
 			body: Column(

@@ -8,6 +8,7 @@ import 'package:timeago/timeago.dart' as timeago;
 import 'profile.dart';
 import 'repost.dart';
 import 'like.dart';
+import 'follow.dart';
 import 'post_merge.dart';
 import 'repost_merge.dart';
 
@@ -124,6 +125,12 @@ class PostModel {
 		final like_count = await LikeModel.countLike(post.id);
 		// 自分がいいねしているかどうか
 		final is_like = await LikeModel.isLike(uid, post.id);
+		// 自分の投稿かどうか
+		final is_self = (uid == post.uid) ? true : false;
+		// 自分がフォロー
+		final bool is_follow = await FollowModel.isFollow(uid, post.uid);
+		// 自分がフォローされている
+		final bool is_follower = await FollowModel.isFollow(post.uid, uid);
 
 		// 返信関連
 		final reply_profile = await getReplyData(uid, post.reply_post_id);
@@ -142,6 +149,9 @@ class PostModel {
 			is_quote: repost != null ? repost!.is_quote : false,
 			like_count: like_count,
 			is_like: is_like,
+			is_self: is_self,
+			is_follow: is_follow,
+			is_follower: is_follower,
 			reply_profile: reply_profile,
 			repost: repost_data,
 		);
@@ -190,13 +200,13 @@ class PostModel {
 		return null;
 	}
 
-	// 投稿を全て取得
+	// 自分以外の投稿を全て取得
 	// TODO おすすめの定義
 	// 投稿降順にソート
 	static Future<List<PostMergeModel>> getAll(String uid) async {
 		List<PostMergeModel> posts = [];
 
-		final snapshot = await store_post.get();
+		final snapshot = await store_post.where('uid', isNotEqualTo: uid).get();
 		if (snapshot.docs.isNotEmpty) {
 			final List<Future<PostMergeModel>> futures = [];
 			final set = <dynamic>{};
@@ -319,7 +329,7 @@ class PostModel {
 	static Future<List<PostMergeModel>> getPostByUids(List<String> uids, String uid) async {
 		List<PostMergeModel> posts = [];
 
-		final snapshot = await store_post.where('uid', arrayContains: uids).get();
+		final snapshot = await store_post.where('uid', whereIn: uids).get();
 		if (snapshot.docs.isNotEmpty) {
 			final List<Future<PostMergeModel>> futures = [];
 			final set = <dynamic>{};

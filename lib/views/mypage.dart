@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../login.dart';
 import '../model/profile.dart';
 import '../widget/loading.dart';
 import '../widget/footer.dart';
@@ -17,14 +16,13 @@ class Mypage extends StatefulWidget {
 class _MypageState extends State<Mypage> with TickerProviderStateMixin {
 	late TabController _footerController;
 	late Future<ProfileModel?> profileFuture;
-	late String? uid;
 	int _currentFooterIndex = 0;
 
 	@override
 	void initState() {
 		super.initState();
 		_footerController = TabController(length: 4, vsync: this);
-		profileFuture = loadProfileData();
+		profileFuture = getProfile();
 	}
 
 	@override
@@ -34,48 +32,12 @@ class _MypageState extends State<Mypage> with TickerProviderStateMixin {
 	}
 
 	// プロフィール取得
-	Future<ProfileModel?> loadProfileData() async {
-		try {
-			uid = await CustomShared.getUID();
-			if (uid == null) {
-				Login();
-			}
-
-			final loadProfile = await ProfileModel.getProfileByUid(uid!);
-			if (loadProfile != null) {
-				await Future.delayed(Duration(milliseconds: 1000));
-				return loadProfile;
-			} else {
-				await _createAndSaveProfile(uid!);	
-			}
-		} catch (e) {
-			print("エラーが発生しました: $e");
-			Login();
-		}
+	Future<ProfileModel?> getProfile() async {
+		final uid = await CustomShared.getUID();
+		return await ProfileModel.getProfileByUid(uid!);
 	}
 
-	// デフォルトデータ
-	Future<void> _createAndSaveProfile(String uid) async {
-		ProfileModel newProfile = ProfileModel(
-			uid: uid,
-			icon: "https://firebasestorage.googleapis.com/v0/b/flutterweb-c3f6b.appspot.com/o/img%2Fi.jpg?alt=media&token=6bbaf7b1-d69e-4e26-ab8b-9fc797eb9909",
-			username: "hoge",
-			acount: "hoge",
-			introduction: "自己紹介です。",
-		);
-
-		try {
-			await ProfileModel.addData(newProfile);
-
-			setState(() {
-				profileFuture = loadProfileData();
-			});
-		} catch (e) {
-			print("プロフィールの作成と保存中にエラーが発生しました: $e");
-			Login();
-		}
-	}
-
+	// タブ切り替え
 	void _handleItemTapped(int index) {
 		setState(() {
 			_currentFooterIndex = index;
@@ -96,19 +58,18 @@ class _MypageState extends State<Mypage> with TickerProviderStateMixin {
 					final profile = snapshot.data!;
 
 					return Scaffold(
-						backgroundColor: Colors.transparent,
 						body: Column(
 							crossAxisAlignment: CrossAxisAlignment.start,
 							children: [
 								Expanded(
-									child: FooterTabView(
+									child: FooterTabWidget(
 										footerController: _footerController,
 										profile: profile
 									),
 								),
 							],
 						),
-						bottomNavigationBar: Footer(
+						bottomNavigationBar: FooterWidget(
 							currentIndex: _currentFooterIndex,
 							onItemTapped: _handleItemTapped,
 						),

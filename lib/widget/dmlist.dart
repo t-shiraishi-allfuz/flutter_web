@@ -23,9 +23,7 @@ class _DmlistWidgetState extends State<DmlistWidget> {
 			),
 			subtitle: Text(
 				'DMの内容がここに表示されます。',
-				style: TextStyle(
-					color: Colors.white70,
-				),
+				style: TextStyle(color: Colors.white70),
 			),
 			onTap: () {},
 		);

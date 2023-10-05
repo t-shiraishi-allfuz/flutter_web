@@ -23,9 +23,7 @@ class _SearchlistWidgetState extends State<SearchlistWidget> {
 			),
 			subtitle: Text(
 				'ツイートの内容がここに表示されます。',
-				style: TextStyle(
-					color: Colors.white70,
-				),
+				style: TextStyle(color: Colors.white70),
 			),
 			trailing: ElevatedButton(
 				style: ElevatedButton.styleFrom(
@@ -33,9 +31,7 @@ class _SearchlistWidgetState extends State<SearchlistWidget> {
 				),
 				child: Text(
 					"フォロー",
-					style: TextStyle(
-						color: Colors.black,
-					),
+					style: TextStyle(color: Colors.black),
 				),
 				onPressed: () {},
 			),

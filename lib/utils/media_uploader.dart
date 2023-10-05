@@ -34,17 +34,4 @@ class MediaUploader {
 			throw e;
 		}
 	}
-
-	static Future<Map<String, int>> getImageSize(String imageUrl) async {
-		final ImageElement image = ImageElement(src: imageUrl);
-		await image.onLoad.first;
-
-		final int width = image.width ?? 0;
-		final int height = image.height ?? 0;
-
-		return {
-			"width": width,
-			"height": height
-		};
-	}
 }

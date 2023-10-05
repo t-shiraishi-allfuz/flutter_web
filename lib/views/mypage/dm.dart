@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-import '../widget/noticelist.dart';
+import '../../widget/dmlist.dart';
 
-class NoticeAllScreen extends StatefulWidget {
+class DmScreen extends StatefulWidget {
 	final String uid;
 
-	NoticeAllScreen({required this.uid});
+	DmScreen({required this.uid});
 
 	@override
-	State<NoticeAllScreen> createState() => _NoticeAllScreenState();
+	State<DmScreen> createState() => _DmScreen();
 }
 
-class _NoticeAllScreenState extends State<NoticeAllScreen> {
+class _DmScreen extends State<DmScreen> {
 	late String uid;
 
 	@override
@@ -23,7 +23,15 @@ class _NoticeAllScreenState extends State<NoticeAllScreen> {
 	@override
 	Widget build(BuildContext context) {
 		return Scaffold(
-			backgroundColor: Colors.transparent,
+			backgroundColor: Colors.black87,
+			appBar: AppBar(
+				backgroundColor: Colors.transparent,
+				automaticallyImplyLeading: false,
+				title: Text(
+					"メッセージ",
+					style: TextStyle(color: Colors.white),
+				),
+			),
 			body: Padding(
 				padding: const EdgeInsets.all(16.0),
 				child: Column(
@@ -32,7 +40,7 @@ class _NoticeAllScreenState extends State<NoticeAllScreen> {
 							child: ListView.builder(
 								itemCount: 10,
 								itemBuilder: (context, index) {
-									return NoticelistWidget();
+									return DmlistWidget();
 								},
 							),
 						),

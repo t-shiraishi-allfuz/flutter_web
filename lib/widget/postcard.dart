@@ -6,24 +6,25 @@ import '../model/like.dart';
 import '../model/post_merge.dart';
 import '../utils/custom_shared.dart';
 import '../utils/post_manager.dart';
+import '../utils/profile_manager.dart';
 import '../widget/user.dart';
 import '../widget/loading.dart';
 import '../widget/dialog.dart';
 
-class PostCard extends StatefulWidget {
+class PostCardWidget extends StatefulWidget {
 	PostMergeModel post;
 	final String uid;
 
-	PostCard({
+	PostCardWidget({
 		required this.post,
 		required this.uid,
 	});
 
 	@override
-	_PostCard createState() => _PostCard();
+	_PostCardWidget createState() => _PostCardWidget();
 }
 
-class _PostCard extends State<PostCard> {
+class _PostCardWidget extends State<PostCardWidget> {
 	late PostMergeModel post;
 	late String uid;
 
@@ -51,6 +52,17 @@ class _PostCard extends State<PostCard> {
 	Future<void> deletePost(PostMergeModel post) async {
 		PostManager manager = PostManager();
 		await manager.deletePost(uid, post);
+	}
+
+	// フォロー更新
+	Future<void> changeFollow(PostMergeModel post) async {
+		ProfileManager manager = ProfileManager();
+
+		if (post.is_follow) {
+			await manager.deleteFollow(uid, post.post.uid);
+		} else {
+			await manager.executeFollow(uid, post.post.uid);
+		}
 	}
 
 	@override
@@ -127,9 +139,7 @@ class _PostCard extends State<PostCard> {
 																alignment: Alignment.topLeft,
 																child: Text(
 																	post.post.content,
-																	style: TextStyle(
-																		color: Colors.white,
-																	),
+																	style: TextStyle(color: Colors.white),
 																),
 															),
 															SizedBox(height: 8.0),
@@ -174,9 +184,7 @@ class _PostCard extends State<PostCard> {
 																		alignment: Alignment.topLeft,
 																		child: Text(
 																			post.repost!.post!.content,
-																			style: TextStyle(
-																				color: Colors.white,
-																			),
+																			style: TextStyle(color: Colors.white),
 																		),
 																	),
 																	SizedBox(height: 8.0),
@@ -275,9 +283,7 @@ class _PostCard extends State<PostCard> {
 									SizedBox(width: 5.0),
 									Text(
 										"再投稿",
-										style: TextStyle(
-											color: Colors.white,
-										),
+										style: TextStyle(color: Colors.white),
 									),
 								],
 							),
@@ -297,9 +303,7 @@ class _PostCard extends State<PostCard> {
 									SizedBox(width: 5.0),
 									Text(
 										"引用",
-										style: TextStyle(
-											color: Colors.white,
-										),
+										style: TextStyle(color: Colors.white),
 									),
 								],
 							),
@@ -338,39 +342,80 @@ class _PostCard extends State<PostCard> {
 					),
 					shadowColor: Colors.white70,
 					children: [
-						SimpleDialogOption(
-							child: Row(
-								children: [
-									Icon(
-										Icons.delete,
-										color: Colors.white,
-									),
-									SizedBox(width: 5.0),
-									Text(
-										"投稿を削除",
-										style: TextStyle(
+						if (post.is_self == false && post.is_follow)
+							SimpleDialogOption(
+								child: Row(
+									children: [
+										Icon(
+											Icons.person_off,
 											color: Colors.white,
 										),
-									),
-								],
-							),
-							onPressed: () async {
-								await deletePost(post);
-								postManager.fetchData();
-
-								// 詳細画面の場合は、削除後に前の画面に戻す
-								if (routeName != null && routeName == "/detail") {
-									await CustomShared.deleteUri();
-
-									Navigator.pushNamed(
-										context,
-										"/mypage"
-									);
-								} else {
+										SizedBox(width: 5.0),
+										Text(
+											"フォローを解除",
+											style: TextStyle(color: Colors.white),
+										),
+									],
+								),
+								onPressed: () async {
+									await changeFollow(post);
+									postManager.fetchData();
 									Navigator.of(context).pop();
-								}
-							},
-						),
+								},
+							),
+						if (post.is_self == false && post.is_follow == false)
+							SimpleDialogOption(
+								child: Row(
+									children: [
+										Icon(
+											Icons.person_add,
+											color: Colors.white,
+										),
+										SizedBox(width: 5.0),
+										Text(
+											"フォローする",
+											style: TextStyle(color: Colors.white),
+										),
+									],
+								),
+								onPressed: () async {
+									await changeFollow(post);
+									postManager.fetchData();
+									Navigator.of(context).pop();
+								},
+							),
+						if (post.is_self)
+							SimpleDialogOption(
+								child: Row(
+									children: [
+										Icon(
+											Icons.delete,
+											color: Colors.white,
+										),
+										SizedBox(width: 5.0),
+										Text(
+											"投稿を削除",
+											style: TextStyle(color: Colors.white),
+										),
+									],
+								),
+								onPressed: () async {
+									await deletePost(post);
+									postManager.fetchData();
+
+									// 詳細画面の場合は、削除後に前の画面に戻す
+									if (routeName != null && routeName == "/detail") {
+										await CustomShared.deleteUri();
+
+										Navigator.pushNamed(
+											context,
+											"/mypage"
+										);
+									} else {
+										Navigator.of(context).pop();
+									}
+								},
+							),
 					],
 				);
 			}

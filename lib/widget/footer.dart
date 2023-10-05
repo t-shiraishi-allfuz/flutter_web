@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
-class Footer extends StatelessWidget {
+// フッター
+class FooterWidget extends StatelessWidget {
 	final int currentIndex;
 	final ValueChanged<int> onItemTapped;
 
-	Footer({
+	FooterWidget({
 		required this.currentIndex,
 		required this.onItemTapped,
 	});
@@ -12,6 +13,7 @@ class Footer extends StatelessWidget {
 	@override
 	Widget build(BuildContext context) {
 		return BottomNavigationBar(
+			backgroundColor: Colors.black87,
 			currentIndex: currentIndex,
 			items: <BottomNavigationBarItem>[
 				BottomNavigationBarItem(

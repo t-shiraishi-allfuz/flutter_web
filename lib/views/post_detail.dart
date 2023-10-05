@@ -61,6 +61,7 @@ class _PostDetail extends State<PostDetail> {
 		}
 
 		return Scaffold(
+			backgroundColor: Colors.black87,
 			appBar: AppBar(
 				backgroundColor: Colors.transparent,
 				toolbarHeight: 50.0,
@@ -106,9 +107,7 @@ class _PostDetail extends State<PostDetail> {
 								return Center(
 									child: Text(
 										"エラーが発生しました",
-										style: TextStyle(
-											color: Colors.red
-										),
+										style: TextStyle(color: Colors.red),
 									),
 								);	
 							} else if (snapshot.hasData && snapshot.data != null) {
@@ -118,13 +117,11 @@ class _PostDetail extends State<PostDetail> {
 									return Center(
 										child: Text(
 											"投稿はありません",
-											style: TextStyle(
-												color: Colors.white
-											),
+											style: TextStyle(color: Colors.white),
 										),
 									);
 								} else {
-									return Timeline(
+									return TimelineWidget(
 										posts: posts,
 										uid: uid,
 										replyFuture: replyFuture,
